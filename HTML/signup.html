@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign-Up</title>
+  <link rel="stylesheet" href="/CSS/signup.css">
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <p style="color: rgb(22, 31, 73); font-size: 35px; font-weight: bolder;margin-top: -5px; 
+    margin-left: 125px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Sign-Up &#128522;</p>
+    <div class="email">
+      <label for="Email">Email</label>
+      <input type="email" name="Email" id="email" placeholder="Enter Your email id">
+    </div>
+    <div class="Pass">
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" placeholder="password">
+    </div>
+    <div class="cnfPass">
+      <label for="password">Confirm Password</label>
+      <input type="password" name="password" id="confirmPassword" placeholder="Confirm-password">
+    </div>
+    <button id="submit" onclick="signUp()">SUBMIT</button>
+    <div class="register-link">
+      <p>Already have an Account - <a href="../index.html">login</a></p>
+    </div>
+  </div>
+
+
+  <script src="/JavaScript/signup.js"></script>
+</body>
+
+</html>

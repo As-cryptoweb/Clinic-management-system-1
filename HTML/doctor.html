@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor</title>
+    <link rel="stylesheet" href="/CSS/doctor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="profile">
+        <h1 id="tag">DOCTOR</h1>
+        <div class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">Profile</a>
+            <div class="dropdown-content">
+                <a href="#">Edit Profile</a>
+                <a href="#">Setting</a>
+                <a href="#">All Member</a>
+                <a href="#">Add Member</a>
+                <a href="#">History</a>
+                <button id="logbtn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="searchengn">
+        <input type="text" id="searchInput" class="search" placeholder="Enter Token no./ Phone">
+        <button id="searchButton">Search</button>
+    </div>
+    <div id="searchResult" class="search-result"></div>
+    <div class="maindash">
+
+    </div>
+    <div class="maindash">
+        <button class="newtoken" id="notifiaction"
+            onclick="window.location.href='notification.html'">Notification</button>
+        <button id="allPatientsButton">All patient</button>
+        <button id="history" class="newtoken" onclick="window.location.href='history.html'">History</button>
+        <button class="newtoken">Upcoming Apt.</button>
+        <button class="newtoken">General Ward</button>
+        <button class="newtoken">I C U</button>
+        <button id="Emergency" href="">EMERGENCY</button>
+    </div>
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-section logo">
+                <img src="/img/logo.jpg" alt="Clinic Logo" class="footer-logo">
+            </div>
+            <div class="footer-section about">
+                <h3>About Our Clinic</h3>
+                <p>Your health is our priority. <br> We provide advanced healthcare services with compassion and
+                    expertise to meet all your medical needs.</p>
+            </div>
+
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +91-123-456-7890</p>
+                <p><i class="fas fa-envelope"></i> info@clinic.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Clinic St, <br> Deoria, UP, India</p>
+            </div>
+
+            <div class="footersocial">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <p>&copy; 2024 Clinic Management System</p>
+    </div>
+    <script src="/JavaScript/doctor.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOhfTpl1nnEgYSMdCiwH5_KKSzFlChuak",
+            authDomain: "sign-in-913d8.firebaseapp.com",
+            projectId: "sign-in-913d8",
+            storageBucket: "sign-in-913d8.appspot.com",
+            messagingSenderId: "326230605006",
+            appId: "1:326230605006:web:7050936c0974d43b49649f",
+            measurementId: "G-3HX5LD10PB"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        function logout() {
+            firebase.auth().signOut().then(() => {
+                console.log('User signed out');
+                window.location.href = "../index.html";
+            }).catch((error) => {
+                console.log(error.message);
+            });
+        }
+
+
+        const db = firebase.firestore();
+
+        // Search Button Event Listener
+        document.getElementById("searchButton").addEventListener("click", () => {
+            const searchQuery = document.getElementById("searchInput").value.trim();
+            if (searchQuery) {
+                searchPatient(searchQuery);
+            } else {
+                alert("Please enter a token number or phone number.");
+            }
+        });
+
+        // Function to search for a patient in both collections
+        function searchPatient(query) {
+            const searchResultDiv = document.getElementById("searchResult");
+            searchResultDiv.innerHTML = ""; // Clear previous search results
+
+            let found = false; // To check if any result is found
+
+            // Search in 'patient-tokens' collection
+            db.collection("patient-tockens")
+                .where("tokenNumber", "==", query)
+                .get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        found = true;
+                        displayResult(doc.data(), "Active Patients");
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching patient-tokens:", error);
+                });
+
+            // Search in 'history' collection
+            db.collection("History")
+                .where("tokenNumber", "==", query)
+                .get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        found = true;
+                        displayResult(doc.data(), "History");
+                    });
+
+                    // If no results found in both collections
+                    if (!found) {
+                        searchResultDiv.innerHTML = "<p>No matching results found.</p>";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching history:", error);
+                });
+        }
+
+        // Function to display patient data in a card
+        function displayResult(patientData, category) {
+            const searchResultDiv = document.getElementById("searchResult");
+
+            const card = `
+            <div class="patient-card">
+            
+                <h3>${category}</h3>
+                <p><strong>Name:</strong> ${patientData.name || "N/A"}</p>
+                <p><strong>Age:</strong> ${patientData.age || "N/A"}</p>
+                <p><strong>Mobile:</strong> ${patientData.mobile || "N/A"}</p>
+                <p><strong>Doctor:</strong> ${patientData.doctor || "N/A"}</p>
+                <p><strong>Disease:</strong> ${patientData.disease || "N/A"}</p>
+                <p><strong>Token No.:</strong> ${patientData.tokenNumber || "N/A"}</p>
+                <p><strong>Date:</strong> ${patientData.date || "N/A"}</p>
+                <p><strong>Time:</strong> ${patientData.time || "N/A"}</p>
+                <p><strong>Status:</strong> ${patientData.status || "N/A"}</p>
+            </div>
+        `;
+
+            searchResultDiv.innerHTML += card;
+        }
+    </script>
+</body>
+
+</html>

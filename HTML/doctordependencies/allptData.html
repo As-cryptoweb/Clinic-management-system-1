@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Patients Data</title>
+    <style>
+        /* Styling for the main container */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0f0fd6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #home {
+            height: 30px;
+            width: 80px;
+            background-color: #6fa1d1;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #home:hover {
+            color: rgb(212, 192, 192);
+            background-color: #3b82f6;
+        }
+
+        /* Patient container */
+        #patientQueue {
+            max-width: 740px;
+            width: 100%;
+            padding: 20px;
+            background-color: #461a1a;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(180, 51, 51, 0.1);
+        }
+
+        /* Styling for each patient's information */
+        .patient-info {
+            padding: 15px;
+            width: 700px;
+            margin-bottom: 15px;
+            background-color: #7090f8;
+            border-left: 10px solid #0857df;
+            border-top: 5px solid #0857df;
+            border-radius: 5px;
+            color: #8b0606;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Horizontal rule styling */
+        .patient-info hr {
+            border: none;
+            border-top: 2px solid #a8bfd8;
+            margin: 10px 0;
+        }
+
+        /* Button styling */
+        .status-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .status-buttons button,
+        .status-buttons input[type="checkbox"] {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .completed-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #e23516;
+        }
+
+        .date-assigned {
+            background-color: #3182ce;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .cleare {
+            background-color: #630808;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .prescription {
+            background-color: #630808;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Prescription input styling */
+        .prescription-input {
+            display: none;
+            margin-top: 10px;
+            width: 400px;
+            height: 80px;
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #0dbd48;
+            border-radius: 5px;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <!--html sturcture-->
+
+    <div id="patientQueue">
+        <button id="home" onclick="window.location.href='/HTML/doctor.html'">Home</button>
+        <h2 style="text-align:center; color:#3b82f6; font-size:24px;">All Patients Queue</h2>
+    </div>
+
+
+
+
+
+    <!-- Firebase App (Legacy CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        // Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAOhfTpl1nnEgYSMdCiwH5_KKSzFlChuak",
+            authDomain: "sign-in-913d8.firebaseapp.com",
+            projectId: "sign-in-913d8",
+            storageBucket: "sign-in-913d8.appspot.com",
+            messagingSenderId: "326230605006",
+            appId: "1:326230605006:web:7050936c0974d43b49649f",
+            measurementId: "G-3HX5LD10PB"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Function to fetch and display patient data
+        function loadPatientData() {
+            db.collection("patient-tockens")
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        document.getElementById("patientQueue").innerHTML = "<p style='text-align:center; color:#666;'>No patients found.</p>";
+                        return;
+                    }
+
+                    let patientList = "";
+                    querySnapshot.forEach((doc) => {
+                        const patient = doc.data();
+                        const patientId = doc.id; // Unique ID for each document
+                        const isCompleted = patient.status === "Completed" ? "checked" : ""; // Check if the patient is completed
+
+                        patientList += `
+                            <div class="patient-info" id="${patientId}">
+                                <p><strong>Name:</strong> ${patient.name}</p>
+                                <p><strong>Age:</strong> ${patient.age}</p>
+                                <p><strong>Number:</strong> ${patient.mobile}</p>
+                                <p><strong>Doctor:</strong> ${patient.doctor}</p>
+                                <p><strong>Disease:</strong> ${patient.disease}</p>
+                                <p><strong>Token No.:</strong> ${patient.tokenNumber}</p>
+                                <p><strong>Date:</strong> ${patient.date}</p>
+                                <p><strong>Time:</strong> ${patient.time}</p>
+                                <p><strong>status:</strong> ${patient.status}</p>
+                                <div class="status-buttons">
+                                    <label class="completed-checkbox">
+                                        <input type="checkbox" onclick="toggleCompletedStatus('${patientId}', this)" ${isCompleted}> Completed
+                                    </label>
+                                    <button class="date-assigned" onclick="updateStatus('${patientId}', 'Date Assigned')">Date Assigned</button>
+                                    <button class="cleare" onclick="moveToHistory('${patientId}')">Clear</button>
+                                    <button class="prescription" onclick="togglePrescriptionInput('${patientId}')">Prescription</button>
+                                </div>
+                                <textarea id="prescriptionInput-${patientId}" class="prescription-input" placeholder="Enter prescription here..."></textarea>
+                                <hr>
+                            </div>
+                        `;
+                    });
+                    document.getElementById("patientQueue").innerHTML += patientList;
+                })
+                .catch((error) => {
+                    console.error("Error fetching patients:", error);
+                });
+        }
+
+        // Function to toggle completed status
+        function toggleCompletedStatus(patientId, checkbox) {
+            const status = checkbox.checked ? "Completed" : "Pending"; // Update based on checkbox
+            db.collection("patient-tockens").doc(patientId).update({ status: status })
+                .then(() => {
+                    alert(`Status updated to ${status}`);
+                })
+                .catch((error) => {
+                    console.error("Error updating status:", error);
+                });
+        }
+
+        // Function to update patient status
+        function updateStatus(patientId, status) {
+            db.collection("patient-tokens").doc(patientId).update({ status: status })
+                .then(() => {
+                    alert(`Status updated to ${status}`);
+                })
+                .catch((error) => {
+                    console.error("Error updating status:", error);
+                });
+        }
+
+        // Function to toggle prescription input field
+        function togglePrescriptionInput(patientId) {
+            const inputField = document.getElementById(`prescriptionInput-${patientId}`);
+            inputField.style.display = inputField.style.display === "none" ? "block" : "none";
+        }
+        // Clear button functionality
+        function moveToHistory(patientId) {
+            // Get the patient's data
+            db.collection("patient-tockens").doc(patientId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const patientData = doc.data();
+
+                        // Add data to "History" collection
+                        db.collection("History").doc(patientId).set(patientData)
+                            .then(() => {
+                                // Remove from "patient-tockens" collection
+                                db.collection("patient-tockens").doc(patientId).delete()
+                                    .then(() => {
+                                        document.getElementById(patientId).remove(); // Remove from UI
+
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error deleting patient:", error);
+                                    });
+                            })
+                            .catch((error) => {
+                                console.error("Error adding to history:", error);
+                            });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching patient:", error);
+                });
+        }
+
+
+
+        // Load patient data on page load
+        window.onload = function () {
+            loadPatientData();
+        };
+    </script>
+</body>
+
+</html>

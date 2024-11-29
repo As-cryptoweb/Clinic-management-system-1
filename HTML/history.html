@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #a19292;
+        }
+
+        .history-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgb(32, 13, 138);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .patient-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #b95959;
+            border-radius: 5px;
+            background-color: #7a67e4;
+        }
+
+        .patient-card p {
+            margin: 5px 0;
+
+        }
+
+        #home {
+            height: 30px;
+            width: 100px;
+            background-color: #ec6666;
+            color: aliceblue;
+            font-weight: bold;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            color: black;
+            font-weight: bold;
+        }
+
+        #home:hover {
+            background-color: #d35757;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="history-container">
+        <h2>Patient History</h2>
+        <button id="home" onclick="window.location.href='doctor.html'">Home</button>
+        <div id="historyList"></div>
+    </div>
+
+    <!-- Firebase App -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOhfTpl1nnEgYSMdCiwH5_KKSzFlChuak",
+            authDomain: "sign-in-913d8.firebaseapp.com",
+            projectId: "sign-in-913d8",
+            storageBucket: "sign-in-913d8.appspot.com",
+            messagingSenderId: "326230605006",
+            appId: "1:326230605006:web:7050936c0974d43b49649f",
+            measurementId: "G-3HX5LD10PB"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Fetch and display history data
+        function loadHistory() {
+            db.collection("History")
+                .get()
+                .then((querySnapshot) => {
+                    const historyList = document.getElementById("historyList");
+                    historyList.innerHTML = ""; // Clear old data
+
+                    querySnapshot.forEach((doc) => {
+                        const patient = doc.data();
+                        historyList.innerHTML += `
+                            <div class="patient-card">
+                                <p><strong>Name:</strong> ${patient.name}</p>
+                                <p><strong>Age:</strong> ${patient.age}</p>
+                                <p><strong>Number:</strong> ${patient.mobile}</p>
+                                <p><strong>Doctor:</strong> ${patient.doctor}</p>
+                                <p><strong>Disease:</strong> ${patient.disease}</p>
+                                <p><strong>Token No.:</strong> ${patient.tokenNumber}</p>
+                                <p><strong>Date:</strong> ${patient.date}</p>
+                                <p><strong>Time:</strong> ${patient.time}</p>
+                                <p><strong>Status:</strong> ${patient.status}</p>
+                            </div>
+                        `;
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching history:", error);
+                });
+        }
+
+        // Load history on page load
+        window.onload = function () {
+            loadHistory();
+        };
+    </script>
+</body>
+
+</html>

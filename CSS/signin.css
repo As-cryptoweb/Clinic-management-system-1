@@ -1,0 +1,114 @@
+body {
+    background-color: rgb(53, 25, 155);
+}
+
+.container {
+    height: 300px;
+    width: 420px;
+    background-color: rgb(190, 12, 12);
+    margin-left: 35%;
+    margin-top: 10%;
+    border-radius: 10px;
+    border: 3px solid rgb(82, 17, 17);
+    box-shadow: 10px 10px 15px 0.1px black;
+}
+
+.email {
+    margin-top: 5px;
+    margin-left: 60px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.Pass {
+    margin-top: 20px;
+    margin-left: 60px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.cnfPass {
+    margin-top: 20px;
+    margin-left: 5px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#email {
+    height: 30px;
+    width: 210px;
+    color: black;
+    font-weight: bold;
+    border-radius: 5px;
+    border-width: 2px;
+    margin-top: 10px;
+    margin-left: 38px;
+    border-style: none;
+    outline: none;
+    background-color: transparent;
+    border: 2px solid rgb(110, 36, 17);
+    text-align: center;
+    border-top: transparent;
+    border-right: transparent;
+}
+
+#password {
+    height: 30px;
+    width: 210px;
+    color: black;
+    font-weight: bold;
+    border-radius: 5px;
+    border-width: 2px;
+    margin-top: 7px;
+    margin-left: 5px;
+    border-style: none;
+    outline: none;
+    background-color: transparent;
+    border: 2px solid rgb(116, 15, 15);
+    text-align: center;
+    border-top: transparent;
+    border-right: transparent;
+}
+
+#submit {
+    height: 40px;
+    width: 300px;
+    background-color: rgb(16, 19, 175);
+    border-radius: 20px;
+    margin-left: 63px;
+    margin-top: 30px;
+    cursor: pointer;
+    border-color: rgb(63, 63, 102);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#submit:hover {
+    background-color: rgb(26, 8, 133);
+    color: rgb(197, 57, 14);
+    transition: 0.4s;
+    box-shadow: 5px 5px 10px 0.1px black;
+}
+
+.eye-icon {
+    right: 10px;
+    cursor: pointer;
+}
+
+.register-link {
+    font-size: .9em;
+    color: aliceblue;
+    text-align: center;
+    margin: 25px 0 10px;
+}
+
+.register-link p a {
+    color: rgb(83, 40, 44);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 21px;
+    font-weight: bold;
+}

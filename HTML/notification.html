@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <style>
+        body {
+            background-color: #6667a0;
+            justify-items: center;
+        }
+
+        .notification-container {
+            border: 2px solid #140a75;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px;
+            background-color: #424396;
+            width: 40%;
+            box-shadow: 15px 10px 15px 0.1px rgb(59, 43, 148);
+        }
+
+        .notification-card {
+            border-radius: 5px;
+            border: 1px solid #4d4848;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #3b3b6b;
+            box-shadow: 10px 5px 15px 0.1px black;
+        }
+
+        .notification-card button {
+            margin: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .notification-card button.accept {
+            background-color: #086b0c;
+            color: white;
+        }
+
+        .notification-card button.reject {
+            background-color: #861c1c;
+            color: white;
+        }
+
+        #home {
+            height: 30px;
+            width: 80px;
+            background-color: #6fa1d1;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #home:hover {
+            color: rgb(212, 192, 192);
+            background-color: #3b82f6;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="notificationContainer" class="notification-container">
+        <button id="home" onclick="window.location.href='doctor.html'">Home</button>
+        <h2>Notifications</h2>
+        <div id="notifications"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOhfTpl1nnEgYSMdCiwH5_KKSzFlChuak",
+            authDomain: "sign-in-913d8.firebaseapp.com",
+            projectId: "sign-in-913d8",
+            storageBucket: "sign-in-913d8.appspot.com",
+            messagingSenderId: "326230605006",
+            appId: "1:326230605006:web:7050936c0974d43b49649f",
+            measurementId: "G-3HX5LD10PB"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Reference to the notifications container
+        const notificationContainer = document.getElementById("notifications");
+
+        // Listen for real-time updates in the "notifications" collection
+        db.collection("notification").onSnapshot((snapshot) => {
+            notificationContainer.innerHTML = ""; // Clear previous notifications
+
+            if (snapshot.empty) {
+                notificationContainer.innerHTML = "<p>No notifications available.</p>";
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const notification = doc.data();
+                const notificationId = doc.id;
+
+                // Correct HTML structure using template literal
+                const card = `
+                    <div class="notification-card">
+                        <p><strong>Name:</strong> ${notification.name}</p>
+                        <p><strong>Age:</strong> ${notification.age}</p>
+                        <p><strong>Mobile:</strong> ${notification.contact}</p>
+                        <p><strong>Doctor:</strong> ${notification.doctor}</p>
+                        <p><strong>Disease:</strong> ${notification.disease}</p>
+                        <button class="accept" onclick="acceptNotification('${notificationId}')">Accept</button>
+                        <button class="reject" onclick="rejectNotification('${notificationId}')">Reject</button>
+                    </div>
+                `;
+                notificationContainer.innerHTML += card;
+            });
+        });
+
+        // Function to accept a notification
+        function acceptNotification(id) {
+            db.collection("notification").doc(id).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const notificationData = doc.data();
+                        const dataToSave = { ...notificationData, status: "Accepted" };
+
+                        return db.collection("acceptedAppointments").add(dataToSave)
+                            .then(() => db.collection("notification").doc(id).delete())
+                            .then(() => alert("Appointment accepted!"));
+                    }
+                })
+                .catch((error) => console.error("Error accepting notification:", error));
+        }
+
+        // Function to reject a notification
+        function rejectNotification(id) {
+            db.collection("notification").doc(id).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const notificationData = doc.data();
+                        const dataToSave = { ...notificationData, status: "Rejected" };
+
+                        return db.collection("rejectedAppointments").add(dataToSave)
+                            .then(() => db.collection("notification").doc(id).delete())
+                            .then(() => alert("Appointment rejected!"));
+                    }
+                })
+                .catch((error) => console.error("Error rejecting notification:", error));
+        }
+    </script>
+</body>
+
+</html>
