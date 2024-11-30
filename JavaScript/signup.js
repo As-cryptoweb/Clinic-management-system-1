@@ -11,7 +11,7 @@ const firebaseApp = firebase.initializeApp({
 const db = firebaseApp.firestore();
 const auth = firebaseApp.auth();
 
-document.getElementById("togglePassword").addEventListener("click", function () {
+document.getElementById("password").addEventListener("click", function () {
   const passwordField = document.getElementById("password");
 
   // Toggle password field type between "password" and "text"
@@ -24,7 +24,7 @@ document.getElementById("togglePassword").addEventListener("click", function () 
   }
 });
 
-const signUp = () => {
+window.signUp = () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
@@ -78,3 +78,4 @@ const signUp = () => {
       }
     });
 };
+
